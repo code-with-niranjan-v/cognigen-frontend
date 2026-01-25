@@ -24,7 +24,7 @@ export default function Signup() {
     try {
       await signup(formData);
       alert("Account created successfully! 🎉");
-      navigate("/dashboard");
+      navigate("/home");
     } catch (err) {
       alert(err.response?.data?.message || "Signup failed");
     } finally {

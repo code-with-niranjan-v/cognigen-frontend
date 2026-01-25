@@ -2,7 +2,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Auth/Login.jsx";
 import Signup from "./pages/Auth/Signup.jsx";
-import Dashboard from "./pages/Dashboard/sample.jsx";
+import Home from "./pages/Home/Home.jsx";
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
 
         {/* private Routes */}
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/home" element={<Home />} />
 
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />

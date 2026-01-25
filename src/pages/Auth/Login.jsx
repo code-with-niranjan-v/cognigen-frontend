@@ -14,7 +14,7 @@ export default function Login() {
     try {
       await login(formData);
       alert("Login successful! 🎉");
-      navigate("/dashboard");
+      navigate("/home");
     } catch (err) {
       alert(err.response?.data?.message || "Login failed");
     } finally {
