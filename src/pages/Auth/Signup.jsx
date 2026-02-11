@@ -63,6 +63,7 @@ export default function Signup() {
         name: formData.name,
         email: formData.email,
         password: formData.password,
+        confirmPassword: formData.confirmPassword,
       });
 
       toast.success("Account created successfully! 🎉", {
