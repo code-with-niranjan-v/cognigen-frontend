@@ -1,8 +1,9 @@
-// cognigen-frontend/src/pages/Dashboard.jsx
+// src/pages/Dashboard.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom"; // ← add this
 import { FiSearch, FiBell, FiUser, FiLogOut } from "react-icons/fi";
 import { motion } from "framer-motion";
-import BackgroundSplashes from "../../components/BackgroundSplashes"; // Reuse from auth!
+import BackgroundSplashes from "../../components/BackgroundSplashes";
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -10,23 +11,23 @@ const cardVariants = {
 };
 
 function Dashboard() {
+  const navigate = useNavigate();
+
   return (
     <>
-      <BackgroundSplashes /> {/* Same animated splashes as login/signup */}
+      <BackgroundSplashes />
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-50/80 via-purple-50/60 to-pink-50/40 relative overflow-hidden">
-        {/* Header - Glassmorphic bar */}
+        {/* Header */}
         <motion.header
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           className="backdrop-blur-xl bg-white/40 border-b border-white/30 shadow-lg sticky top-0 z-10 px-6 py-4"
         >
           <div className="max-w-7xl mx-auto flex items-center justify-between">
-            {/* Left: Title + Search */}
             <div className="flex items-center gap-6">
               <h1 className="text-2xl md:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#5d60ef] to-purple-600">
                 Cognigen Dashboard
               </h1>
-
               <div className="relative hidden md:block">
                 <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
                 <input
@@ -37,7 +38,6 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* Right: Notifications + Profile */}
             <div className="flex items-center gap-5">
               <button className="relative p-2.5 rounded-full hover:bg-white/30 transition">
                 <FiBell className="text-xl text-gray-700" />
@@ -46,17 +46,16 @@ function Dashboard() {
 
               <div className="flex items-center gap-3 cursor-pointer group">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#5d60ef] to-purple-500 flex items-center justify-center text-white font-bold shadow-md">
-                  M {/* Replace with real initials or img later */}
+                  N
                 </div>
                 <div className="hidden sm:block">
                   <p className="font-medium text-gray-800 group-hover:text-[#5d60ef] transition">
-                    Md
+                    N Md
                   </p>
                   <p className="text-xs text-gray-500">Learner</p>
                 </div>
               </div>
 
-              {/* Logout icon (optional) */}
               <button className="p-2 rounded-full hover:bg-white/30 transition text-gray-600 hover:text-red-500">
                 <FiLogOut className="text-xl" />
               </button>
@@ -69,19 +68,17 @@ function Dashboard() {
           <motion.div
             initial="hidden"
             animate="visible"
-            variants={{
-              visible: { transition: { staggerChildren: 0.1 } },
-            }}
+            variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
           >
-            {/* Learning Resources Card */}
+            {/* Learning Resources Card – now clickable */}
             <motion.div
               variants={cardVariants}
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
-              className="backdrop-blur-xl bg-white/40 border border-white/30 rounded-3xl shadow-xl p-8 flex flex-col items-center text-center hover:shadow-2xl transition-all group"
+              onClick={() => navigate("/learning-resources")} // ← added navigation
+              className="backdrop-blur-xl bg-white/40 border border-white/30 rounded-3xl shadow-xl p-8 flex flex-col items-center text-center hover:shadow-2xl transition-all group cursor-pointer"
             >
               <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#5d60ef]/10 to-purple-500/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                {/* Replace with your book icon or emoji */}
                 <span className="text-4xl">📚</span>
               </div>
               <h3 className="text-xl font-bold text-gray-800 mb-2">
@@ -92,7 +89,7 @@ function Dashboard() {
               </p>
             </motion.div>
 
-            {/* Assessments Card */}
+            {/* Adaptive Assessments */}
             <motion.div
               variants={cardVariants}
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
@@ -109,7 +106,7 @@ function Dashboard() {
               </p>
             </motion.div>
 
-            {/* AI Interview Card */}
+            {/* AI Mock Interviews */}
             <motion.div
               variants={cardVariants}
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
@@ -127,7 +124,6 @@ function Dashboard() {
             </motion.div>
           </motion.div>
 
-          {/* Optional: Welcome message or quick stats */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

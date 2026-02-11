@@ -1,8 +1,9 @@
-// cognigen-frontend/src/pages/Auth/Login.jsx
+// cognigen-frontend/src/pages/Auth/Signup.jsx
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { signup } from "../../api/authApi";
+import { useAuth } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 import BackgroundSplashes from "../../components/BackgroundSplashes";
 import RobotAvatar from "../../components/RobotAvatar";
 
@@ -28,6 +29,7 @@ export default function Signup() {
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
+  const { signup: contextSignup } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,17 +42,36 @@ export default function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords don't match!");
+      toast.error("Passwords don't match!", {
+        duration: 4000,
+        position: "top-center",
+      });
       return;
     }
+
     setLoading(true);
+
     try {
-      await signup({ ...formData, phone: "" }); // phone optional → removed
-      alert("Account created successfully! 🎉");
+      await contextSignup({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+      toast.success("Account created successfully! 🎉", {
+        duration: 3000,
+        position: "top-center",
+      });
       navigate("/home");
     } catch (err) {
-      alert(err.response?.data?.message || "Signup failed");
+      const message =
+        err.response?.data?.message || "Signup failed. Please try again.";
+      toast.error(message, {
+        duration: 5000,
+        position: "top-center",
+      });
     } finally {
       setLoading(false);
     }
@@ -89,6 +110,7 @@ export default function Signup() {
             </motion.p>
 
             <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Name */}
               <motion.div variants={itemVariants} className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 ml-1">
                   Full Name
@@ -110,6 +132,7 @@ export default function Signup() {
                 </div>
               </motion.div>
 
+              {/* Email */}
               <motion.div variants={itemVariants} className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 ml-1">
                   Email Address
@@ -133,6 +156,7 @@ export default function Signup() {
                 </div>
               </motion.div>
 
+              {/* Password */}
               <motion.div variants={itemVariants} className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 ml-1">
                   Password
@@ -156,6 +180,7 @@ export default function Signup() {
                 </div>
               </motion.div>
 
+              {/* Confirm Password */}
               <motion.div variants={itemVariants} className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 ml-1">
                   Confirm Password

@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { login } from "../../api/authApi";
+import { useAuth } from "../../context/AuthContext";
+import toast from "react-hot-toast";
 import BackgroundSplashes from "../../components/BackgroundSplashes";
 import RobotAvatar from "../../components/RobotAvatar";
 
@@ -23,6 +24,7 @@ export default function Login() {
   const [isPasswordFocused, setIsPasswordFocused] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
+  const { login: contextLogin } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,12 +38,21 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      await login(formData);
-      alert("Login successful! 🎉");
+      await contextLogin(formData);
+      toast.success("Login successful! 🎉", {
+        duration: 3000,
+        position: "top-center",
+      });
       navigate("/home");
     } catch (err) {
-      alert(err.response?.data?.message || "Login failed");
+      const message =
+        err.response?.data?.message || "Login failed. Please try again.";
+      toast.error(message, {
+        duration: 4000,
+        position: "top-center",
+      });
     } finally {
       setLoading(false);
     }
@@ -53,7 +64,6 @@ export default function Login() {
 
       <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-indigo-50/80 via-purple-50/60 to-pink-50/40">
         <div className="grid md:grid-cols-2 gap-12 max-w-6xl w-full items-center">
-          {/* Robot side - hidden on mobile */}
           <div className="hidden md:flex justify-center">
             <RobotAvatar
               isEmailFocused={isEmailFocused}
@@ -62,7 +72,6 @@ export default function Login() {
             />
           </div>
 
-          {/* Form side */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -82,6 +91,7 @@ export default function Login() {
             </motion.p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Email field */}
               <motion.div variants={itemVariants} className="space-y-2">
                 <label className="text-sm font-semibold text-gray-700 ml-1">
                   Email Address
@@ -105,6 +115,7 @@ export default function Login() {
                 </div>
               </motion.div>
 
+              {/* Password field */}
               <motion.div variants={itemVariants} className="space-y-2">
                 <div className="flex justify-between items-center">
                   <label className="text-sm font-semibold text-gray-700 ml-1">
