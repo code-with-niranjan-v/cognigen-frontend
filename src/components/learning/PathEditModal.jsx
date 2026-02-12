@@ -1,9 +1,9 @@
-// src/components/learning/PathEditModal.jsx
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { FiX, FiPlus, FiEdit2, FiTrash2 } from "react-icons/fi";
 import toast from "react-hot-toast";
 import api from "../../api/instance";
+import { v4 as uuidv4 } from "uuid";
 
 function SubmoduleDeleteConfirm({ isOpen, onClose, onConfirm, subTitle }) {
   if (!isOpen) return null;
@@ -54,7 +54,6 @@ export default function PathEditModal({
   const [activeTab, setActiveTab] = useState("path");
   const [title, setTitle] = useState("");
 
-  // Topic form states
   const [showTopicForm, setShowTopicForm] = useState(false);
   const [editingTopic, setEditingTopic] = useState(null);
   const [topicName, setTopicName] = useState("");
@@ -62,22 +61,18 @@ export default function PathEditModal({
   const [topicEstTime, setTopicEstTime] = useState(60);
   const [submodules, setSubmodules] = useState([]);
 
-  // New submodule input
   const [newSubTitle, setNewSubTitle] = useState("");
   const [newSubSummary, setNewSubSummary] = useState("");
 
-  // Submodule inline edit
   const [editingSubmoduleId, setEditingSubmoduleId] = useState(null);
   const [editSubTitle, setEditSubTitle] = useState("");
   const [editSubSummary, setEditSubSummary] = useState("");
 
-  // Delete confirmation
   const [showSubDeleteModal, setShowSubDeleteModal] = useState(false);
   const [subToDelete, setSubToDelete] = useState(null);
 
   const formRef = useRef(null);
 
-  // Reset form when modal opens or path changes
   useEffect(() => {
     if (isOpen && path) {
       setTitle(path.title || "");
@@ -98,7 +93,6 @@ export default function PathEditModal({
     }
   }, [isOpen, path]);
 
-  // Auto-scroll to form
   useEffect(() => {
     if (showTopicForm && formRef.current) {
       formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -128,11 +122,14 @@ export default function PathEditModal({
     setSubmodules((prev) => [
       ...prev,
       {
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         title: newSubTitle.trim(),
         summary: newSubSummary.trim(),
-        content: {},
+        cells: [],
+        miniQuiz: [],
+        contentVersion: 2,
         completed: false,
+        generatedAt: null,
       },
     ]);
 
@@ -144,16 +141,18 @@ export default function PathEditModal({
     setSubmodules((prev) => {
       const afterRemove = prev.filter((s) => s.id !== subId);
 
-      // Only auto-add default if this was the LAST submodule and not in edit mode
       if (afterRemove.length === 0 && editingSubmoduleId === null) {
         toast("Last submodule removed — added default one");
         return [
           {
-            id: crypto.randomUUID(),
+            id: uuidv4(),
             title: topicName.trim() || "Default Submodule",
             summary: `Default submodule for "${topicName.trim() || "Topic"}"`,
-            content: {},
+            cells: [],
+            miniQuiz: [],
+            contentVersion: 2,
             completed: false,
+            generatedAt: null,
           },
         ];
       }
@@ -196,15 +195,17 @@ export default function PathEditModal({
 
     let finalSubmodules = [...submodules];
 
-    // Ensure at least one submodule
     if (finalSubmodules.length === 0) {
       finalSubmodules = [
         {
-          id: crypto.randomUUID(),
+          id: uuidv4(),
           title: topicName.trim(),
           summary: `Default submodule for "${topicName.trim()}"`,
-          content: {},
+          cells: [],
+          miniQuiz: [],
+          contentVersion: 2,
           completed: false,
+          generatedAt: null,
         },
       ];
       toast("No submodules — added default one");
@@ -231,6 +232,7 @@ export default function PathEditModal({
         onTopicAdded(res.data);
         toast.success("Topic & submodules added");
       }
+
       setTopicName("");
       setTopicDifficulty("medium");
       setTopicEstTime(60);
@@ -291,7 +293,6 @@ export default function PathEditModal({
           exit={{ scale: 0.9, opacity: 0 }}
           className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto"
         >
-          {/* Header */}
           <div className="sticky top-0 bg-white border-b px-8 py-5 flex items-center justify-between z-10">
             <h2 className="text-2xl font-bold text-gray-900">
               Edit Learning Path
@@ -304,7 +305,6 @@ export default function PathEditModal({
             </button>
           </div>
 
-          {/* Tabs */}
           <div className="flex border-b px-8">
             <button
               onClick={() => setActiveTab("path")}
@@ -431,7 +431,6 @@ export default function PathEditModal({
                         className="w-full px-4 py-3 border rounded-lg"
                       />
 
-                      {/* Submodules */}
                       <div className="border-t pt-6">
                         <h4 className="font-semibold mb-4">Submodules</h4>
 

@@ -8,6 +8,7 @@ import Home from "./pages/Home/Home";
 import LandingPage from "./pages/Landing/LandingPage";
 import LearningResources from "./pages/Learning/LearningResources";
 import LearningPathDetail from "./pages/Learning/LearningPathDetail";
+import NotebookPage from "./pages/Learning/NotebookPage";
 
 function App() {
   return (
@@ -28,6 +29,10 @@ function App() {
           <Route
             path="/learning-resources/:pathId"
             element={<LearningPathDetail />}
+          />
+          <Route
+            path="/learning-resources/:pathId/notebook/:topicId"
+            element={<NotebookPage />}
           />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
