@@ -1,9 +1,9 @@
-// src/components/learning/TopicCard.jsx
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiChevronDown, FiChevronUp, FiZap } from "react-icons/fi";
+import { FiChevronDown, FiChevronUp, FiZap, FiBookOpen } from "react-icons/fi";
 import toast from "react-hot-toast";
 import api from "../../api/instance";
+import { useNavigate } from "react-router-dom";
 
 export default function TopicCard({
   topic,
@@ -13,9 +13,11 @@ export default function TopicCard({
   setLoadingTopicId,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const navigate = useNavigate();
   const isGenerating = loadingTopicId === topic.id;
 
-  const handleGenerateContent = async () => {
+  const handleGenerateContent = async (e) => {
+    e.stopPropagation();
     if (isGenerating) return;
 
     setLoadingTopicId(topic.id);
@@ -38,7 +40,7 @@ export default function TopicCard({
         duration: 4000,
       });
 
-      onContentGenerated(res.data.updatedTopic);
+      onContentGenerated(res.data.topic);
     } catch (err) {
       const msg = err.response?.data?.message || "Content generation failed";
       toast.error(msg, { duration: 6000 });
@@ -48,6 +50,11 @@ export default function TopicCard({
     }
   };
 
+  const handleOpenNotebook = (e) => {
+    e.stopPropagation();
+    navigate(`/learning-resources/${pathId}/notebook/${topic.id}`);
+  };
+
   const progress =
     topic.submodules.length > 0
       ? Math.round((topic.completedSubmodules / topic.submodules.length) * 100)
@@ -55,7 +62,6 @@ export default function TopicCard({
 
   return (
     <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm hover:shadow-md transition-shadow">
-      {/* Header row */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-50 transition"
@@ -78,8 +84,7 @@ export default function TopicCard({
             </span>
           </div>
           <p className="text-sm text-gray-500 mt-1">
-            Est. time: {topic.estimated_time_hours || "?"} hour
-            {topic.estimated_time_hours !== 1 ? "s" : ""}
+            Est. time: {topic.estimatedTimeMinutes || "?"} min
           </p>
         </div>
 
@@ -98,7 +103,6 @@ export default function TopicCard({
         </div>
       </button>
 
-      {/* Expandable content */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -109,14 +113,10 @@ export default function TopicCard({
             className="overflow-hidden"
           >
             <div className="px-6 pb-6 pt-2 border-t">
-              {/* Generate button if not generated */}
-              {!topic.contentGenerated && (
-                <div className="mb-6">
+              <div className="mb-6 flex flex-wrap gap-4">
+                {!topic.contentGenerated ? (
                   <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleGenerateContent();
-                    }}
+                    onClick={handleGenerateContent}
                     disabled={isGenerating}
                     className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
                       isGenerating
@@ -125,14 +125,19 @@ export default function TopicCard({
                     }`}
                   >
                     <FiZap className="text-lg" />
-                    {isGenerating
-                      ? "Generating..."
-                      : "Generate Content for this Topic"}
+                    {isGenerating ? "Generating..." : "Generate Content"}
                   </button>
-                </div>
-              )}
+                ) : (
+                  <button
+                    onClick={handleOpenNotebook}
+                    className="flex items-center gap-2 px-6 py-3 rounded-lg font-medium bg-green-600 hover:bg-green-700 text-white shadow-sm hover:shadow transition-all"
+                  >
+                    <FiBookOpen className="text-lg" />
+                    Open Notebook
+                  </button>
+                )}
+              </div>
 
-              {/* Submodules list */}
               <div className="space-y-4">
                 {topic.submodules.map((sub) => (
                   <div
@@ -144,6 +149,11 @@ export default function TopicCard({
                       <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                         {sub.summary || "No summary available"}
                       </p>
+                      {sub.cells?.length > 0 && (
+                        <p className="text-xs text-green-600 mt-1">
+                          Content ready ({sub.cells.length} cells)
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-4">
@@ -151,29 +161,7 @@ export default function TopicCard({
                         <span className="text-green-600 text-sm font-medium">
                           Completed
                         </span>
-                      ) : sub.content && Object.keys(sub.content).length > 0 ? (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // TODO: open content viewer modal / page
-                            toast("View content modal coming soon!");
-                          }}
-                          className="text-[#5d60ef] hover:text-[#4a4df2] font-medium"
-                        >
-                          View Content
-                        </button>
-                      ) : (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            // Optional: generate single submodule content
-                            toast("Single submodule generation coming soon!");
-                          }}
-                          className="text-gray-500 hover:text-gray-700 text-sm"
-                        >
-                          Generate
-                        </button>
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 ))}

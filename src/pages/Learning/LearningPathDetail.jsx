@@ -1,4 +1,3 @@
-// src/pages/Learning/LearningPathDetail.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -113,7 +112,9 @@ export default function LearningPathDetail() {
                 <button
                   onClick={() => {
                     if (!path.topics || path.topics.length < 2) {
-                      toast.error("Add at least two topic before rearranging!");
+                      toast.error(
+                        "Add at least two topics before rearranging!",
+                      );
                       return;
                     }
                     setShowRearrangeModal(true);
@@ -132,7 +133,7 @@ export default function LearningPathDetail() {
                   Overall Progress
                 </div>
                 <div className="text-4xl md:text-5xl font-bold text-[#5d60ef]">
-                  {Math.round(path.progress?.percentage || 0)}%
+                  {Math.round(path.overallProgress || 0)}%
                 </div>
               </div>
 
@@ -156,7 +157,7 @@ export default function LearningPathDetail() {
             <motion.div
               className="h-full bg-[#5d60ef]"
               initial={{ width: 0 }}
-              animate={{ width: `${path.progress?.percentage || 0}%` }}
+              animate={{ width: `${path.overallProgress || 0}%` }}
               transition={{ duration: 1.2, ease: "easeOut" }}
             />
           </div>
@@ -204,7 +205,7 @@ export default function LearningPathDetail() {
         onTopicAdded={(newTopic) => {
           setPath((prev) => ({
             ...prev,
-            topics: [...prev.topics, newTopic],
+            topics: [...(prev?.topics || []), newTopic],
           }));
         }}
         onTopicUpdated={(updatedTopic) => {
