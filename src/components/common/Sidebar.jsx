@@ -2,11 +2,13 @@
 import { motion } from "framer-motion";
 import { MdOutlineLeaderboard, MdDashboard } from "react-icons/md";
 import { IoIosSettings, IoIosLogOut } from "react-icons/io";
+import { CgProfile } from "react-icons/cg"; // Better profile icon
 import { SiReact } from "react-icons/si";
 
 const menuItems = [
   { icon: MdDashboard, label: "Dashboard" },
   { icon: MdOutlineLeaderboard, label: "Leaderboard" },
+  { icon: CgProfile, label: "Profile" },
   { icon: IoIosSettings, label: "Settings" },
   { icon: IoIosLogOut, label: "Log Out", danger: true },
 ];

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiX, FiArrowLeft, FiArrowRight, FiZap } from "react-icons/fi";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import toast from "react-hot-toast";
 import api from "../../api/instance";
 

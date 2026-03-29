@@ -2,7 +2,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiArrowLeft } from "react-icons/fi";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import BackgroundSplashes from "../common/BackgroundSplashes";
 
 export default function LearningHeader({ title = "Learning Resources" }) {

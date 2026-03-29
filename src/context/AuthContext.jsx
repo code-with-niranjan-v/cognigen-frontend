@@ -1,20 +1,17 @@
-// src/context/AuthContext.jsx
-import { createContext, useContext, useState, useEffect } from "react";
+import {  useState, useEffect } from "react";
 import api from "../api/instance";
-
-const AuthContext = createContext();
+import { AuthContext } from "./useAuth";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Try to load user on mount if token exists (cookie-based)
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const res = await api.get("/auth/me");
         setUser(res.data?.user || null);
-      } catch (err) {
+      } catch {
         setUser(null);
       } finally {
         setLoading(false);
@@ -39,28 +36,16 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       await api.post("/auth/logout");
-    } catch (err) {
-      console.error("Logout failed:", err);
     } finally {
       setUser(null);
     }
   };
 
-  const value = {
-    user,
-    loading,
-    login,
-    signup,
-    logout,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{ user, loading, setUser, login, signup, logout }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};

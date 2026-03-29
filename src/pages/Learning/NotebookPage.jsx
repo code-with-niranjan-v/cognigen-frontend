@@ -257,7 +257,7 @@ export default function NotebookPage() {
     }
   };
 
-  const handleBack = () => navigate(`/learning-resources/${pathId}`);
+  const handleBack = () => navigate(-1);
 
   if (loading) {
     return (

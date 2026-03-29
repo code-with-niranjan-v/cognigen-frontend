@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import LearningHeader from "../../components/learning/LearningHeader";
 import TopicCard from "../../components/learning/TopicCard";
 import PathEditModal from "../../components/learning/PathEditModal";
